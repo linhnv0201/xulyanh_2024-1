@@ -1,0 +1,1 @@
+Phát hiện và tách biên ảnh (Edge Detection - Extraction). Cài đặt ứng dụng gồm các bộ phát hiện biên: Prewitt, Sobel, Canny Detectors, ứng dụng cho phép thay đổi tham số để đạt kết quả phát hiện và tách biên ảnh. Xây dựng kich bản so sánh kết quả các bộ phát hiện biên trong từng tình huống cụ thể ảnh màu, ảnh xám, ảnh đơn, ảnh phức tạp. 
