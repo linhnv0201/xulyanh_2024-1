@@ -31,7 +31,19 @@ def canny_edge_detection(gray, low_threshold, high_threshold):
 
 # Hàm hiển thị ảnh trên giao diện
 def display_image(cv_image):
-    img = Image.fromarray(cv_image)
+    # Resize the image
+    max_width = 800  # Maximum width for the display
+    max_height = 600  # Maximum height for the display
+    height, width = cv_image.shape[:2]
+
+    # Tính toán tỷ lệ và kích thước mới
+    scale = min(max_width / width, max_height / height)
+    new_width = int(width * scale)
+    new_height = int(height * scale)
+
+    # Resize ảnh
+    resized_image = cv2.resize(cv_image, (new_width, new_height))
+    img = Image.fromarray(resized_image)
     imgtk = ImageTk.PhotoImage(image=img)
     display_label.imgtk = imgtk
     display_label.configure(image=imgtk)
@@ -39,9 +51,10 @@ def display_image(cv_image):
 # Hàm cập nhật kết quả dựa trên các tham số người dùng chọn
 def update_image():
     method = method_var.get()
-    if method == "Normal":
-        # Hiển thị ảnh gốc nếu chọn "Normal"
+    if method == "Color Image":
         display_image(image)
+    elif method == "Gray Image":
+        display_image(gray_image)
     elif method == "Prewitt":
         edges = prewitt_edge_detection(gray_image)
         display_image(edges)
@@ -56,7 +69,7 @@ def update_image():
         display_image(edges)
 
 # Đường dẫn đến ảnh của bạn
-image_path = 'Image_for_TeamSV\car.jpg'
+image_path = 'Image_for_TeamSV/car.jpg'
 image, gray_image = load_image(image_path)
 
 # Tạo giao diện chính
@@ -68,9 +81,10 @@ display_label = Label(root)
 display_label.pack()
 
 # Chọn bộ phát hiện biên
-method_var = tk.StringVar(value="Prewitt")
+method_var = tk.StringVar(value="Color Image")
 Label(root, text="Select Edge Detection Method:").pack()
-tk.Radiobutton(root, text="Normal", variable=method_var, value="Normal", command=update_image).pack()
+tk.Radiobutton(root, text="Color Image", variable=method_var, value="Color Image", command=update_image).pack()
+tk.Radiobutton(root, text="Gray Image", variable=method_var, value="Gray Image", command=update_image).pack()
 tk.Radiobutton(root, text="Prewitt", variable=method_var, value="Prewitt", command=update_image).pack()
 tk.Radiobutton(root, text="Sobel", variable=method_var, value="Sobel", command=update_image).pack()
 tk.Radiobutton(root, text="Canny", variable=method_var, value="Canny", command=update_image).pack()
