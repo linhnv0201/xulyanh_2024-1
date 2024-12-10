@@ -4,37 +4,33 @@ import tkinter as tk
 from tkinter import Scale, Button, Label, filedialog
 from PIL import Image, ImageTk
 
-# Hàm đọc ảnh 
+# Hàm đọc ảnh và chuyển sang ảnh xám
 def load_image(path):
     image = cv2.imread(path)
     if image is None:
         print("Error: Could not read image.")
         return None, None
-    return image
-
-# Hàm chuyển ảnh sang xám
-def convert_to_gray(image):
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    return gray
+    return image, gray
 
 # Hàm phát hiện biên bằng Prewitt
-def prewitt_edge_detection(image):
+def prewitt_edge_detection(gray):
     kernelx = np.array([[1, 0, -1], [1, 0, -1], [1, 0, -1]])
     kernely = np.array([[1, 1, 1], [0, 0, 0], [-1, -1, -1]])
-    prewitt_x = cv2.filter2D(image, -1, kernelx)
-    prewitt_y = cv2.filter2D(image, -1, kernely)
+    prewitt_x = cv2.filter2D(gray, -1, kernelx)
+    prewitt_y = cv2.filter2D(gray, -1, kernely)
     return prewitt_x + prewitt_y
 
 # Hàm phát hiện biên bằng Sobel với kích thước kernel tùy chỉnh
-def sobel_edge_detection(image, ksize):
-    sobel_x = cv2.Sobel(image, cv2.CV_64F, 1, 0, ksize=ksize)
-    sobel_y = cv2.Sobel(image, cv2.CV_64F, 0, 1, ksize=ksize)
+def sobel_edge_detection(gray, ksize):
+    sobel_x = cv2.Sobel(gray, cv2.CV_64F, 1, 0, ksize=ksize)
+    sobel_y = cv2.Sobel(gray, cv2.CV_64F, 0, 1, ksize=ksize)
     sobel = cv2.magnitude(sobel_x, sobel_y)
     return np.uint8(sobel)
 
 # Hàm phát hiện biên bằng Canny với ngưỡng tùy chỉnh
-def canny_edge_detection(image, low_threshold, high_threshold):
-    return cv2.Canny(image, low_threshold, high_threshold)
+def canny_edge_detection(gray, low_threshold, high_threshold):
+    return cv2.Canny(gray, low_threshold, high_threshold)
 
 # Hàm hiển thị ảnh trên giao diện
 def display_image(cv_image):
@@ -61,35 +57,34 @@ def display_image(cv_image):
 
 # Hàm cập nhật kết quả dựa trên các tham số người dùng chọn
 def update_image():
-    if image is None:
+    if image is None or gray_image is None:
         return  # Nếu chưa có ảnh, không thực hiện gì
     
     method = method_var.get()
     if method == "Color Image":
         display_image(image)
     elif method == "Gray Image":
-        gray = convert_to_gray(image)
-        display_image(gray)
+        display_image(gray_image)
     elif method == "Prewitt":
-        edges = prewitt_edge_detection(image)
+        edges = prewitt_edge_detection(gray_image)
         display_image(edges)
     elif method == "Sobel":
         ksize = sobel_scale.get()
-        edges = sobel_edge_detection(image, ksize)
+        edges = sobel_edge_detection(gray_image, ksize)
         display_image(edges)
     elif method == "Canny":
         low_threshold = canny_low_scale.get()
         high_threshold = canny_high_scale.get()
-        edges = canny_edge_detection(image, low_threshold, high_threshold)
+        edges = canny_edge_detection(gray_image, low_threshold, high_threshold)
         display_image(edges)
 
 # Hàm mở cửa sổ chọn ảnh
 def open_image():
-    global image
+    global image, gray_image
     file_path = filedialog.askopenfilename(title="Select an Image", filetypes=[("Image files", "*.jpg;*.jpeg;*.png;*.bmp;*.gif")])
     if file_path:
-        image = load_image(file_path)
-        if image is not None :
+        image, gray_image = load_image(file_path)
+        if image is not None and gray_image is not None:
             update_image()  # Cập nhật ảnh ngay khi ảnh đã được tải thành công
         else:
             print("Failed to load image.")
