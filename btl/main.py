@@ -13,9 +13,9 @@ def load_image(path):
     return image
 
 # Hàm chuyển ảnh sang xám
-def convert_to_gray(image):
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    return gray
+# def convert_to_gray(image):
+#     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+#     return gray
 
 # Hàm phát hiện biên bằng Prewitt
 def prewitt_edge_detection(image):
@@ -67,9 +67,9 @@ def update_image():
     method = method_var.get()
     if method == "Color Image":
         display_image(image)
-    elif method == "Gray Image":
-        gray = convert_to_gray(image)
-        display_image(gray)
+    # elif method == "Gray Image":
+    #     gray = convert_to_gray(image)
+    #     display_image(gray)
     elif method == "Prewitt":
         edges = prewitt_edge_detection(image)
         display_image(edges)
@@ -117,7 +117,7 @@ open_button.grid(row=0, column=0, padx=10)
 method_var = tk.StringVar(value="Color Image")
 Label(control_frame, text="Select Edge Detection Method:").grid(row=1, column=0, padx=10)
 tk.Radiobutton(control_frame, text="Color Image", variable=method_var, value="Color Image", command=update_image).grid(row=2, column=0, sticky="w")
-tk.Radiobutton(control_frame, text="Gray Image", variable=method_var, value="Gray Image", command=update_image).grid(row=3, column=0, sticky="w")
+# tk.Radiobutton(control_frame, text="Gray Image", variable=method_var, value="Gray Image", command=update_image).grid(row=3, column=0, sticky="w")
 tk.Radiobutton(control_frame, text="Prewitt", variable=method_var, value="Prewitt", command=update_image).grid(row=4, column=0, sticky="w")
 tk.Radiobutton(control_frame, text="Sobel", variable=method_var, value="Sobel", command=update_image).grid(row=5, column=0, sticky="w")
 tk.Radiobutton(control_frame, text="Canny", variable=method_var, value="Canny", command=update_image).grid(row=6, column=0, sticky="w")
